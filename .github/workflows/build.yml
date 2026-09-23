@@ -1,0 +1,41 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract Android project
+        run: |
+          mkdir android_project
+          unzip -q alembic-sales-calculator-android-app.zip -d android_project
+          find android_project -name build.gradle -type f -exec dirname {} \;
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+
+      - name: Build APK
+        run: |
+          PROJECT_DIR=$(dirname $(find android_project -name settings.gradle -o -name settings.gradle.kts | head -1))
+          cd "$PROJECT_DIR"
+          gradle assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Alembic-Sales-Calculator-APK
+          path: '**/build/outputs/apk/debug/*.apk'
