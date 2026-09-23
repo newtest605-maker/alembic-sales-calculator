@@ -14,7 +14,7 @@ jobs:
       - name: Extract Android project
         run: |
           mkdir android_project
-          unzip -q alembic-sales-calculator-android-app.zip -d android_project
+          unzip -q alembic-sales-calculator-new-logo-final.zip -d android_project
           find android_project -name build.gradle -type f -exec dirname {} \;
 
       - name: Setup Java
